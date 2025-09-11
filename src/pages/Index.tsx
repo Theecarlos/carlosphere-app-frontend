@@ -4,11 +4,13 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { WalletDashboard } from "@/components/wallet/wallet-dashboard";
 import { ChatList } from "@/components/chat/chat-list";
 
-const Index = () => {
-  const [activeTab, setActiveTab] = useState("wallet");
+export const Index = () => {
+  const [activeTab, setActiveTab] = useState("home");
 
   const getPageTitle = (tab: string) => {
-    switch (tab) {
+    switch (activeTab) {
+      case "home":
+      return "CarloSphere";
       case "wallet":
         return "CarloWallet";
       case "chat":
@@ -26,6 +28,37 @@ const Index = () => {
 
   const renderContent = () => {
     switch (activeTab) {
+      case "home":
+        return (
+          <div className="p-6 text-center space-y-6 animate-fade-in">
+            <img
+              src="/logo.png"
+              alt="CarloSphere Logo"
+              className="mx-auto w-32"
+            />
+            <h1 className="text-3xl font-bold">CarloSphere Technologies</h1>
+            <p className="text-lg italic text-muted-foreground">
+              “Solution that inspires progress.”
+            </p>
+
+            <div>
+              <h2 className="text-xl font-semibold mt-4">🌍 Vision</h2>
+              <p>
+                To become Africa’s first true SuperApp, simplifying daily life
+                through one secure, locally-driven platform.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mt-4">🎯 Mission</h2>
+              <p>
+                To empower youth, hustlers, and communities in Africa by
+                providing a single trusted digital ecosystem that connects money,
+                work, learning, and life.
+              </p>
+            </div>
+          </div>
+        );
       case "wallet":
         return <WalletDashboard />;
       case "chat":

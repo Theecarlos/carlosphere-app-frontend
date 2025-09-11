@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { 
+import {
+  Home, 
   Wallet, 
   MessageCircle, 
   Briefcase, 
@@ -13,6 +14,7 @@ interface BottomNavProps {
 }
 
 const navItems = [
+  { id: "home", icon: Home, label: "Home" }, 
   { id: "wallet", icon: Wallet, label: "Wallet" },
   { id: "chat", icon: MessageCircle, label: "Chat" },
   { id: "works", icon: Briefcase, label: "Works" },
