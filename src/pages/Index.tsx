@@ -3,14 +3,18 @@ import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { WalletDashboard } from "@/components/wallet/wallet-dashboard";
 import { ChatList } from "@/components/chat/chat-list";
+import { LoginForm } from "@/components/auth/login-form";
+import { SignupForm } from "@/components/auth/signup-form";
 
 export const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
+  const [authMode, setAuthMode] = useState<"login" | "signup" | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const getPageTitle = (tab: string) => {
     switch (activeTab) {
       case "home":
-      return "CarloSphere";
+        return "CarloSphere";
       case "wallet":
         return "CarloWallet";
       case "chat":
@@ -27,15 +31,18 @@ export const Index = () => {
   };
 
   const renderContent = () => {
+    if (authMode === "login") {
+      return <LoginForm onSuccess={() => { setIsAuthenticated(true); setAuthMode(null); }} onSwitch={() => setAuthMode("signup")} />;
+    }
+    if (authMode === "signup") {
+      return <SignupForm onSuccess={() => { setIsAuthenticated(true); setAuthMode(null); }} onSwitch={() => setAuthMode("login")} />;
+    }
+
     switch (activeTab) {
       case "home":
         return (
           <div className="p-6 text-center space-y-6 animate-fade-in">
-            <img
-              src="/logo.png"
-              alt="CarloSphere Logo"
-              className="mx-auto w-32"
-            />
+            <img src="/logo.png" alt="CarloSphere Logo" className="mx-auto w-32" />
             <h1 className="text-3xl font-bold">CarloSphere Technologies</h1>
             <p className="text-lg italic text-muted-foreground">
               “Solution that inspires progress.”
@@ -57,49 +64,64 @@ export const Index = () => {
                 work, learning, and life.
               </p>
             </div>
+
+            {/* Auth buttons */}
+            {!isAuthenticated && (
+              <div className="mt-6 flex justify-center gap-4">
+                <button
+                  onClick={() => setAuthMode("login")}
+                  className="px-6 py-2 bg-primary text-white rounded-lg"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => setAuthMode("signup")}
+                  className="px-6 py-2 bg-secondary text-white rounded-lg"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
           </div>
         );
       case "wallet":
-        return <WalletDashboard />;
+        return isAuthenticated ? (
+          <WalletDashboard />
+        ) : (
+          <div className="p-6 text-center">
+            <p className="mb-4">Please log in to access your CarloWallet.</p>
+            <button
+              onClick={() => setAuthMode("login")}
+              className="px-6 py-2 bg-primary text-white rounded-lg"
+            >
+              Log In
+            </button>
+          </div>
+        );
       case "chat":
         return <ChatList />;
       case "works":
         return (
-          <div className="p-4 space-y-6 animate-fade-in">
-            <div className="text-center py-20">
-              <div className="w-16 h-16 gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">W</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">CarloWorks</h3>
-              <p className="text-muted-foreground">Find jobs and showcase your skills</p>
-              <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
-            </div>
+          <div className="p-4 text-center py-20 animate-fade-in">
+            <h3 className="text-xl font-semibold mb-2">CarloWorks</h3>
+            <p className="text-muted-foreground">Find jobs and showcase your skills</p>
+            <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
           </div>
         );
       case "learn":
         return (
-          <div className="p-4 space-y-6 animate-fade-in">
-            <div className="text-center py-20">
-              <div className="w-16 h-16 gradient-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">L</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">CarloLearn</h3>
-              <p className="text-muted-foreground">Learn new skills and earn certificates</p>
-              <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
-            </div>
+          <div className="p-4 text-center py-20 animate-fade-in">
+            <h3 className="text-xl font-semibold mb-2">CarloLearn</h3>
+            <p className="text-muted-foreground">Learn new skills and earn certificates</p>
+            <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
           </div>
         );
       case "community":
         return (
-          <div className="p-4 space-y-6 animate-fade-in">
-            <div className="text-center py-20">
-              <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">C</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">CarloCommunity</h3>
-              <p className="text-muted-foreground">Connect with events and voting</p>
-              <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
-            </div>
+          <div className="p-4 text-center py-20 animate-fade-in">
+            <h3 className="text-xl font-semibold mb-2">CarloCommunity</h3>
+            <p className="text-muted-foreground">Connect with events and voting</p>
+            <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
           </div>
         );
       default:
@@ -110,11 +132,7 @@ export const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <AppHeader title={getPageTitle(activeTab)} />
-      
-      <main className="flex-1 pb-16 overflow-y-auto">
-        {renderContent()}
-      </main>
-
+      <main className="flex-1 pb-16 overflow-y-auto">{renderContent()}</main>
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
