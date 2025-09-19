@@ -23,12 +23,14 @@ export function LoginForm() {
       });
 
       const data = await res.json();
+
       if (res.ok) {
-        localStorage.setItem("token", data.token); // save JWT
+        localStorage.setItem("token", data.token); // Save JWT
+        localStorage.setItem("user", JSON.stringify(data.user)); // Save user info
         setMessage("✅ Login successful! Redirecting...");
-        setTimeout(() => navigate("/wallet"), 1500); // redirect to wallet
+        setTimeout(() => navigate("/wallet"), 1500);
       } else {
-        setMessage("❌ " + (data.message || "Login failed"));
+        setMessage("❌ " + (data.error || "Login failed"));
       }
     } catch (err) {
       setMessage("⚠️ Error connecting to server.");
@@ -43,6 +45,7 @@ export function LoginForm() {
       className="space-y-4 p-6 max-w-md mx-auto bg-white rounded-2xl shadow"
     >
       <h2 className="text-2xl font-bold text-center">Login</h2>
+
       <Input
         type="email"
         placeholder="Email"
@@ -50,6 +53,7 @@ export function LoginForm() {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
+
       <Input
         type="password"
         placeholder="Password"
@@ -57,9 +61,11 @@ export function LoginForm() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </Button>
+
       {message && (
         <p
           className={`text-center text-sm ${
@@ -73,6 +79,7 @@ export function LoginForm() {
           {message}
         </p>
       )}
+
       <p className="text-center text-sm mt-2">
         Don’t have an account?{" "}
         <Link to="/signup" className="text-green-600 hover:underline">

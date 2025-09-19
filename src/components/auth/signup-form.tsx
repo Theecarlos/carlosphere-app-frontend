@@ -17,21 +17,27 @@ export function SignupForm() {
     setMessage("");
 
     try {
-      const res = await fetch(
-        "https://carlosphere-backend.onrender.com/auth/signup",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fullName, email, password }),
-        }
-      );
+      const res = await fetch("https://carlosphere-backend.onrender.com/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: fullName, // ✅ match backend field
+          email,
+          password,
+        }),
+      });
 
       const data = await res.json();
+
       if (res.ok) {
+        // if backend later returns token/user, we can store them here
+        if (data.token) localStorage.setItem("token", data.token);
+        if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
+
         setMessage("✅ Signup successful! Redirecting to login...");
-        setTimeout(() => navigate("/login"), 1500); // redirect after 1.5s
+        setTimeout(() => navigate("/login"), 1500);
       } else {
-        setMessage("❌ " + (data.message || "Signup failed"));
+        setMessage("❌ " + (data.error || "Signup failed"));
       }
     } catch (err) {
       setMessage("⚠️ Error connecting to server.");
@@ -46,6 +52,7 @@ export function SignupForm() {
       className="space-y-4 p-6 max-w-md mx-auto bg-white rounded-2xl shadow"
     >
       <h2 className="text-2xl font-bold text-center">Sign Up</h2>
+
       <Input
         type="text"
         placeholder="Full Name"
@@ -53,6 +60,7 @@ export function SignupForm() {
         onChange={(e) => setFullName(e.target.value)}
         required
       />
+
       <Input
         type="email"
         placeholder="Email"
@@ -60,6 +68,7 @@ export function SignupForm() {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
+
       <Input
         type="password"
         placeholder="Password"
@@ -67,9 +76,11 @@ export function SignupForm() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Creating account..." : "Sign Up"}
       </Button>
+
       {message && (
         <p
           className={`text-center text-sm ${
@@ -83,6 +94,7 @@ export function SignupForm() {
           {message}
         </p>
       )}
+
       <p className="text-center text-sm mt-2">
         Already have an account?{" "}
         <Link to="/login" className="text-green-600 hover:underline">
