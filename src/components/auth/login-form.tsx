@@ -28,7 +28,7 @@ export function LoginForm() {
         localStorage.setItem("token", data.token); // Save JWT
         localStorage.setItem("user", JSON.stringify(data.user)); // Save user info
         setMessage("✅ Login successful! Redirecting...");
-        setTimeout(() => navigate("/wallet"), 1500);
+        setTimeout(() => navigate("/wallet-dashboard"), 1500);
       } else {
         setMessage("❌ " + (data.error || "Login failed"));
       }
