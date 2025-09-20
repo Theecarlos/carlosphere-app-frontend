@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import {WalletDashboard} from "@/components/wallet/wallet-dashboard";
 
 // Import your auth forms
 import { LoginForm } from "@/components/auth/login-form";
@@ -25,6 +26,9 @@ const App = () => (
           {/* Auth Pages */}
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
+
+{/* Wallet */}
+  <Route path="/wallet" element={<WalletDashboard />} />
 
           {/* Catch-all for unknown routes */}
           <Route path="*" element={<NotFound />} />
