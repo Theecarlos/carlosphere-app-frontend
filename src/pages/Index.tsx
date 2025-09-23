@@ -12,30 +12,33 @@ export const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const getPageTitle = (tab: string) => {
-    switch (activeTab) {
-      case "home":
-        return "CarloSphere";
-      case "wallet":
-        return "CarloWallet";
-      case "chat":
-        return "CarloChat";
-      case "works":
-        return "CarloWorks";
-      case "learn":
-        return "CarloLearn";
-      case "community":
-        return "CarloCommunity";
-      default:
-        return "CarloSphere One";
+    switch (tab) {
+      case "home": return "CarloSphere";
+      case "wallet": return "CarloWallet";
+      case "chat": return "CarloChat";
+      case "works": return "CarloWorks";
+      case "learn": return "CarloLearn";
+      case "community": return "CarloCommunity";
+      default: return "CarloSphere One";
     }
   };
 
   const renderContent = () => {
     if (authMode === "login") {
-      return <LoginForm onSuccess={() => { setIsAuthenticated(true); setAuthMode(null); }} onSwitch={() => setAuthMode("signup")} />;
+      return (
+        <LoginForm 
+          onSuccess={() => { setIsAuthenticated(true); setAuthMode(null); }}
+          onSwitch={() => setAuthMode("signup")}
+        />
+      );
     }
     if (authMode === "signup") {
-      return <SignupForm onSuccess={() => { setIsAuthenticated(true); setAuthMode(null); }} onSwitch={() => setAuthMode("login")} />;
+      return (
+        <SignupForm 
+          onSuccess={() => { setIsAuthenticated(true); setAuthMode(null); }}
+          onSwitch={() => setAuthMode("login")}
+        />
+      );
     }
 
     switch (activeTab) {
@@ -48,25 +51,12 @@ export const Index = () => {
               “Solution that inspires progress.”
             </p>
 
-            <div>
-              <h2 className="text-xl font-semibold mt-4">🌍 Vision</h2>
-              <p>
-                To become Africa’s first true SuperApp, simplifying daily life
-                through one secure, locally-driven platform.
-              </p>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-semibold mt-4">🎯 Mission</h2>
-              <p>
-                To empower youth, hustlers, and communities in Africa by
-                providing a single trusted digital ecosystem that connects money,
-                work, learning, and life.
-              </p>
-            </div>
-
-            {/* Auth buttons */}
-            {!isAuthenticated && (
+            {isAuthenticated ? (
+              <div className="mt-6 space-y-4">
+                <h2 className="text-2xl font-semibold">Welcome back 👋</h2>
+                <p className="text-gray-600">You can now explore your wallet, chat, and more.</p>
+              </div>
+            ) : (
               <div className="mt-6 flex justify-center gap-4">
                 <button
                   onClick={() => setAuthMode("login")}
@@ -82,8 +72,24 @@ export const Index = () => {
                 </button>
               </div>
             )}
+
+            {/* Vision, Mission always visible */}
+            <div>
+              <h2 className="text-xl font-semibold mt-8">🌍 Vision</h2>
+              <p>
+                To become Africa’s first true SuperApp, simplifying daily life through one secure, locally-driven platform.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mt-4">🎯 Mission</h2>
+              <p>
+                To empower youth, hustlers, and communities in Africa by providing a single trusted digital ecosystem that connects money, work, learning, and life.
+              </p>
+            </div>
           </div>
         );
+
       case "wallet":
         return isAuthenticated ? (
           <WalletDashboard />
@@ -98,8 +104,22 @@ export const Index = () => {
             </button>
           </div>
         );
+
       case "chat":
-        return <ChatList />;
+        return isAuthenticated ? (
+          <ChatList />
+        ) : (
+          <div className="p-6 text-center">
+            <p className="mb-4">Please log in to access CarloChat.</p>
+            <button
+              onClick={() => setAuthMode("login")}
+              className="px-6 py-2 bg-primary text-white rounded-lg"
+            >
+              Log In
+            </button>
+          </div>
+        );
+
       case "works":
         return (
           <div className="p-4 text-center py-20 animate-fade-in">
@@ -108,6 +128,7 @@ export const Index = () => {
             <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
           </div>
         );
+
       case "learn":
         return (
           <div className="p-4 text-center py-20 animate-fade-in">
@@ -116,6 +137,7 @@ export const Index = () => {
             <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
           </div>
         );
+
       case "community":
         return (
           <div className="p-4 text-center py-20 animate-fade-in">
@@ -124,6 +146,7 @@ export const Index = () => {
             <p className="text-sm text-muted-foreground mt-2">Coming soon...</p>
           </div>
         );
+
       default:
         return <WalletDashboard />;
     }
@@ -133,7 +156,12 @@ export const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <AppHeader title={getPageTitle(activeTab)} />
       <main className="flex-1 pb-16 overflow-y-auto">{renderContent()}</main>
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* ✅ pass isAuthenticated here */}
+      <BottomNav 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        isAuthenticated={isAuthenticated} 
+      />
     </div>
   );
 };

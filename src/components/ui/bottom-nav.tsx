@@ -1,20 +1,21 @@
 import { cn } from "@/lib/utils";
 import {
-  Home, 
-  Wallet, 
-  MessageCircle, 
-  Briefcase, 
-  GraduationCap, 
-  Users 
+  Home,
+  Wallet,
+  MessageCircle,
+  Briefcase,
+  GraduationCap,
+  Users,
 } from "lucide-react";
 
 interface BottomNavProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  isAuthenticated: boolean; // add this
 }
 
 const navItems = [
-  { id: "home", icon: Home, label: "Home" }, 
+  { id: "home", icon: Home, label: "Home" },
   { id: "wallet", icon: Wallet, label: "Wallet" },
   { id: "chat", icon: MessageCircle, label: "Chat" },
   { id: "works", icon: Briefcase, label: "Works" },
@@ -22,11 +23,16 @@ const navItems = [
   { id: "community", icon: Users, label: "Community" },
 ];
 
-export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
+export function BottomNav({ activeTab, onTabChange, isAuthenticated }: BottomNavProps) {
+  // show only home if not logged in
+  const visibleNavItems = isAuthenticated
+    ? navItems
+    : navItems.filter((item) => item.id === "home");
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
       <div className="flex justify-around items-center py-2 px-1">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button

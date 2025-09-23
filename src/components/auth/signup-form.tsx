@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function SignupForm() {
+type SignupFormProps = {
+  onSuccess?: () => void; // called after successful signup
+  onSwitch?: () => void;  // called when switching to login tab
+};
+
+export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +26,7 @@ export function SignupForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          full_name: fullName, // ✅ match backend field
+          full_name: fullName, // ✅ must match backend
           email,
           password,
         }),
@@ -30,11 +35,11 @@ export function SignupForm() {
       const data = await res.json();
 
       if (res.ok) {
-        // if backend later returns token/user, we can store them here
         if (data.token) localStorage.setItem("token", data.token);
         if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
 
-        setMessage("✅ Signup successful! Redirecting to login...");
+        setMessage("✅ Signup successful!");
+        onSuccess?.(); // fire callback if parent needs it
         setTimeout(() => navigate("/login"), 1500);
       } else {
         setMessage("❌ " + (data.error || "Signup failed"));
@@ -97,9 +102,12 @@ export function SignupForm() {
 
       <p className="text-center text-sm mt-2">
         Already have an account?{" "}
-        <Link to="/login" className="text-green-600 hover:underline">
+        <span
+          className="text-green-600 hover:underline cursor-pointer"
+          onClick={onSwitch}
+        >
           Login
-        </Link>
+        </span>
       </p>
     </form>
   );

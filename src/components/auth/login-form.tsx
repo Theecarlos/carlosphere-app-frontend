@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function LoginForm() {
+type LoginFormProps = {
+  onSuccess?: () => void; // called after successful login
+  onSwitch?: () => void;  // called when switching to signup
+};
+
+export function LoginForm({ onSuccess, onSwitch }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,9 +30,11 @@ export function LoginForm() {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.token); // Save JWT
-        localStorage.setItem("user", JSON.stringify(data.user)); // Save user info
-        setMessage("✅ Login successful! Redirecting...");
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        setMessage("✅ Login successful!");
+        onSuccess?.(); // 🔑 notify parent
         setTimeout(() => navigate("/wallet"), 1500);
       } else {
         setMessage("❌ " + (data.error || "Login failed"));
@@ -82,9 +89,12 @@ export function LoginForm() {
 
       <p className="text-center text-sm mt-2">
         Don’t have an account?{" "}
-        <Link to="/signup" className="text-green-600 hover:underline">
+        <span
+          className="text-green-600 hover:underline cursor-pointer"
+          onClick={onSwitch}
+        >
           Sign Up
-        </Link>
+        </span>
       </p>
     </form>
   );
