@@ -28,7 +28,7 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
         body: JSON.stringify({
           full_name: fullName, // ✅ must match backend
           email,
-          password,
+          password_hash: password,
         }),
       });
 
