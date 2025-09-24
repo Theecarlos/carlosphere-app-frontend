@@ -35,7 +35,7 @@ export function LoginForm({ onSuccess, onSwitch }: LoginFormProps) {
 
         setMessage("✅ Login successful!");
         onSuccess?.(); // 🔑 notify parent
-        setTimeout(() => navigate("/wallet"), 1500);
+        setTimeout(() => navigate("/"), 1500);
       } else {
         setMessage("❌ " + (data.error || "Login failed"));
       }
