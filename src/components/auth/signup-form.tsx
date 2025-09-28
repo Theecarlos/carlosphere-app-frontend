@@ -35,10 +35,10 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          full_name: fullName,
-          national_id: nationalId,
-          email,
-          password_hash: password,
+         full_name: fullName,        
+    id_number: nationalId,      
+    email: email,               
+    password: password,      
         }),
       });
 
@@ -92,6 +92,7 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
         required
       />
 
+      {/* Password */}
       <div className="relative">
         <Input
           type={showPassword ? "text" : "password"}
@@ -108,6 +109,7 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
         </span>
       </div>
 
+      {/* Confirm Password */}
       <Input
         type={showPassword ? "text" : "password"}
         placeholder="Confirm Password"
