@@ -4,14 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type SignupFormProps = {
-  onSuccess?: () => void; // called after successful signup
-  onSwitch?: () => void;  // called when switching to login tab
+  onSuccess?: () => void;
+  onSwitch?: () => void;
 };
 
 export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
   const [fullName, setFullName] = useState("");
+  const [nationalId, setNationalId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -21,12 +24,19 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
     setLoading(true);
     setMessage("");
 
+    if (password !== confirmPassword) {
+      setMessage("❌ Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("https://carlosphere-backend.onrender.com/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          full_name: fullName, // ✅ must match backend
+          full_name: fullName,
+          national_id: nationalId,
           email,
           password_hash: password,
         }),
@@ -39,7 +49,7 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
         if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
 
         setMessage("✅ Signup successful!");
-        onSuccess?.(); // fire callback if parent needs it
+        onSuccess?.();
         setTimeout(() => navigate("/login"), 1500);
       } else {
         setMessage("❌ " + (data.error || "Signup failed"));
@@ -67,6 +77,14 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
       />
 
       <Input
+        type="text"
+        placeholder="National ID Number"
+        value={nationalId}
+        onChange={(e) => setNationalId(e.target.value)}
+        required
+      />
+
+      <Input
         type="email"
         placeholder="Email"
         value={email}
@@ -74,11 +92,27 @@ export function SignupForm({ onSuccess, onSwitch }: SignupFormProps) {
         required
       />
 
+      <div className="relative">
+        <Input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <span
+          className="absolute right-3 top-2 cursor-pointer text-sm text-green-600"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? "🙈 Hide" : "👁️ Show"}
+        </span>
+      </div>
+
       <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        type={showPassword ? "text" : "password"}
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
         required
       />
 
